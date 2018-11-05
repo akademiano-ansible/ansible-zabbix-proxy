@@ -19,14 +19,14 @@ zabbix_repo_yum:
     gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX
     state: present
 
-zabbix_server_host: 192.168.1.1
+zabbix_server_host:
 zabbix_server_port: 10051
 zabbix_database_creation: True
 zabbix_database_sqlload: True
 
 # Some role specific vars
-zabbix_proxy_database: mysql
-zabbix_proxy_database_long: mysql
+zabbix_proxy_database: sqlite3
+zabbix_proxy_database_long: sqlite3
 # zabbix_proxy_database: pgsql
 # zabbix_proxy_database_long: postgresql
 
