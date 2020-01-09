@@ -4,6 +4,36 @@ Below an overview of all changes in the releases.
 
 Version (Release date)
 
+UNRELEASED:
+
+1.6.0   (2019-12-01)
+
+  * Added missing "become: yes" statements in tasks/main.yml Redhat.yml #53 (By pull request: elcomtik (Thanks!))
+  * SocketDir missing in zabbix_proxy.conf #54 (By pull request: Vinclame (Thanks!))
+  * selinux blocks preprocessing workers #55 (By pull request: Vinclame (Thanks!))
+  * Update to 4.4 #56 (By pull request: macaddict89 (Thanks!))
+
+1.5.0   (2019-09-27)
+
+  * Fix and refactor SELinux support #47 (By pull request: angystardust (Thanks!))
+  * Update Debian.yml #49 (By pull request: giedriusramas (Thanks!))
+  * Calling yum and apt using a loop is deprecated #50 (By pull request: Aversiste (Thanks!))
+  * fixing issue 48 #51 (By pull request: bbcnt (Thanks!))
+  * change default version #52 (By pull request: fabtho (Thanks!))
+
+1.4.0   (2019-04-15)
+
+  * Added property zabbix_proxy_package_state #45
+  * Fixed some Ansible Lint issues #46
+  * bugfix: "zabbix_proxy_tlspskfile" was not created with content "zabbi… #39 (By pull request: menzelit (Thanks!))
+  * Updated to Zabbix 4.2 #41
+  * enable upgrade of an existing installation #42 (By pull request: zab35 (Thanks!))
+
+1.3.0   (2019-01-25)
+
+  * Added retries for packages installation #38
+  * Adding zabbix_proxy_install_database_client variable #37 (By pull request: rnsc (Thanks!))
+
 1.2.0   (2018-10-19)
 
   * Make it work with Zabbix 4.0

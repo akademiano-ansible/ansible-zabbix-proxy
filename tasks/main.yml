@@ -27,6 +27,7 @@
     group: zabbix
     mode: 0755
     state: directory
+  become: yes
 
 - name: "Create module dir zabbix-proxy"
   file:
@@ -34,14 +35,48 @@
     owner: zabbix
     group: zabbix
     state: directory
+  become: yes
 
-- name: "Allow zabbix_proxy to start (SELinux)"
-  selinux_permissive:
-    name: zabbix_t
-    permissive: true
+- name: "Create directory for PSK file if not exist."
+  file:
+    path: "{{ zabbix_proxy_tlspskfile | dirname }}"
+    mode: 0755
+    state: directory
   become: yes
   when:
-    - zabbix_selinux
+    - zabbix_proxy_tlspskfile is defined
+
+- name: "Place TLS PSK File"
+  copy:
+    dest: "{{ zabbix_proxy_tlspskfile }}"
+    content: "{{ zabbix_proxy_tlspsk_secret }}"
+    owner: zabbix
+    group: zabbix
+    mode: 0400
+  become: yes
+  when:
+    - zabbix_proxy_tlspskfile is defined
+    - zabbix_proxy_tlspsk_secret is defined
+  notify:
+    - restart zabbix-proxy
+
+- name: "Allow zabbix-proxy to open connections (SELinux)"
+  seboolean:
+    name: zabbix_can_network
+    persistent: yes
+    state: yes
+  become: yes
+  when: ansible_selinux.status == "enabled"
+  tags: selinux
+
+- name: "Allow zabbix-proxy to connect to zabbix_proxy_preprocessing.sock (SELinux)"
+  seboolean:
+    name: daemons_enable_cluster_mode
+    persistent: yes
+    state: yes
+  become: yes
+  when: ansible_selinux.status == "enabled"
+  tags: selinux
 
 - name: "Configure zabbix-proxy"
   template:
@@ -50,10 +85,11 @@
     owner: zabbix
     group: zabbix
     mode: 0644
-  notify: zabbix-proxy restarted
+  notify: restart zabbix-proxy
 
 - name: "zabbix-proxy started"
   service:
     name: zabbix-proxy
     state: started
     enabled: yes
+  become: yes

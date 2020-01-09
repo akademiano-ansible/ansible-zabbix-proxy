@@ -27,6 +27,7 @@
     gpgcheck: "{{ item.gpgcheck }}"
     gpgkey: "{{ item.gpgkey }}"
     state: "{{ item.state | default('present') }}"
+  become: yes
   with_items: "{{ zabbix_repo_yum }}"
   tags:
     - zabbix-agent
@@ -34,12 +35,18 @@
 - name: "RedHat | Installing zabbix-proxy-{{ zabbix_proxy_database }}"
   yum:
     pkg: zabbix-proxy-{{ zabbix_proxy_database }}
-    state: present
+    state: "{{ zabbix_proxy_package_state }}"
+  become: yes
+  register: is_zabbix_proxy_package_installed
+  until: is_zabbix_proxy_package_installed is succeeded
 
 - name: "RedHat | Install Ansible PostgreSQL module dependencies"
   yum:
     name: python-psycopg2
     state: present
+  become: yes
+  register: are_zabbix_proxy_dependency_packages_installed
+  until: are_zabbix_proxy_dependency_packages_installed is succeeded
   when:
     - zabbix_database_creation or zabbix_database_sqlload
     - zabbix_proxy_database == 'pgsql'
@@ -49,11 +56,11 @@
 
 - name: "RedHat | Install Mysql Client package RHEL7"
   yum:
-    name: "{{ item }}"
+    name: ['mariadb', 'MySQL-python']
     state: installed
-  with_items:
-    - mariadb
-    - MySQL-python
+  become: yes
+  register: are_zabbix_proxy_dependency_packages_installed
+  until: are_zabbix_proxy_dependency_packages_installed is succeeded
   when:
     - zabbix_database_creation or zabbix_database_sqlload
     - zabbix_proxy_database == 'mysql'
@@ -64,15 +71,16 @@
 
 - name: "RedHat | Install Mysql Client package RHEL5 - 6"
   yum:
-    name: "{{ item }}"
+    name: ['mysql', 'MySQL-python']
     state: present
-  with_items:
-    - mysql
-    - MySQL-python
+  become: yes
+  register: are_zabbix_proxy_dependency_packages_installed
+  until: are_zabbix_proxy_dependency_packages_installed is succeeded
   when:
     - zabbix_database_creation or zabbix_database_sqlload
     - zabbix_proxy_database == 'mysql'
     - ansible_distribution_major_version != '7'
+    - zabbix_proxy_install_database_client
   tags:
     - zabbix-proxy
     - init
@@ -82,9 +90,13 @@
   yum:
     name: postgresql
     state: present
+  become: yes
+  register: are_zabbix_proxy_dependency_packages_installed
+  until: are_zabbix_proxy_dependency_packages_installed is succeeded
   when:
     - zabbix_database_creation or zabbix_database_sqlload
     - zabbix_proxy_database == 'pgsql'
+    - zabbix_proxy_install_database_client
   tags:
     - zabbix-proxy
     - init

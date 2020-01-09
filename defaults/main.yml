@@ -1,9 +1,10 @@
 ---
 # defaults file for zabbix-proxy
 
-zabbix_version: 4.2
+zabbix_version: 4.4
 zabbix_repo: zabbix
-zabbix_selinux: False
+zabbix_proxy_package_state: present
+zabbix_proxy_install_database_client: True
 
 zabbix_repo_yum:
   - name: zabbix
@@ -27,6 +28,8 @@ zabbix_database_sqlload: True
 # Some role specific vars
 zabbix_proxy_database: sqlite3
 zabbix_proxy_database_long: sqlite3
+#zabbix_proxy_database: mysql
+#zabbix_proxy_database_long: mysql
 # zabbix_proxy_database: pgsql
 # zabbix_proxy_database_long: postgresql
 
@@ -37,8 +40,10 @@ zabbix_proxy_listenport: 10051
 zabbix_proxy_sourceip:
 zabbix_proxy_logfile: /var/log/zabbix/zabbix_proxy.log
 zabbix_proxy_logfilesize: 10
+zabbix_proxy_enableremotecommands: 0
 zabbix_proxy_debuglevel: 3
 zabbix_proxy_pidfile: /var/run/zabbix/zabbix_proxy.pid
+zabbix_proxy_socketdir: /var/run/zabbix
 zabbix_proxy_dbencoding: utf8
 zabbix_proxy_dbcollation: utf8_bin
 zabbix_proxy_dbhost: localhost
