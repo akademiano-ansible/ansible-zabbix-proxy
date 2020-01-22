@@ -8,11 +8,6 @@
     - "../vars/main.yml"
 
 - name: "Install the correct repository"
-  include: "RedHat.yml"
-  when:
-    - ansible_os_family == "RedHat"
-
-- name: "Install the correct repository"
   include: "Debian.yml"
   when:
     - ansible_os_family == "Debian"
